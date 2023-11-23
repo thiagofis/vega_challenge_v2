@@ -16,8 +16,8 @@ var authRequest = new HttpRequestMessage(HttpMethod.Post, "Authentication/login"
     Content = new StringContent(authPayload, Encoding.UTF8, "application/json"),
     Headers =
     {
-        {"User-Agent", "challenge"},
-        {"TraceId", "challenge-auth"}
+        { "User-Agent", "challenge" },
+        { "TraceId", "challenge-auth" }
     }
 };
 
@@ -28,8 +28,8 @@ var unitRequest = new HttpRequestMessage(HttpMethod.Get, "/Unit/list")
 {
     Headers =
     {
-        {"User-Agent", "challenge"},
-        {"TraceId", "challenge-get-units"}
+        { "User-Agent", "challenge" },
+        { "TraceId", "challenge-get-units" }
     }
 };
 unitRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -39,10 +39,18 @@ var units = await unitResponse.Content.ReadFromJsonAsync<UnitCollection>();
 var dic = units.Items.GroupBy(x => x.UnitGroupId).ToDictionary(x => x.Key,
     y => y.ToList().Select(z => new { unit = z.Name, location = string.IsNullOrWhiteSpace(z.AddressInformation) ? null : z.AddressInformation }));
 
-var json = JsonSerializer.Serialize(dic, options: new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull});
+var json = JsonSerializer.Serialize(
+    dic,
+    options: new JsonSerializerOptions
+    {
+        WriteIndented = true, 
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    });
 
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine();
+Console.WriteLine(json);
+Console.ReadKey();
 
 
 class UnitCollection
@@ -55,5 +63,4 @@ class Unit
     public Guid UnitGroupId { get; init; }
     public string Name { get; init; }
     public string AddressInformation { get; init; }
-    
 }
